@@ -12,7 +12,7 @@ end)
 
 local minPacific     = 6
 local minPaleto      = 5
-local minShopRobbery = 2
+local minShopRobbery = 1
 local minVangellico  = 4
 local minHostage     = 3
 
@@ -29,6 +29,8 @@ end)
 RegisterCommand("Scoreboard", function()
     if not bool then 
         SetNuiFocus(true, true)  
+
+        local my_id = GetPlayerServerId(PlayerId())
         
         QBCore.Functions.TriggerCallback("scoreboard:GetPlayers", function(players)
             local plist = {}
@@ -37,29 +39,30 @@ RegisterCommand("Scoreboard", function()
                 local p_charName = player.charName
                 local p_id = player.id
 
-                table.insert(plist, '<div id=\"bplayers\"> ' .. p_name .. '<span id=\"tiptext\"><i class=\"fas fa-file-signature\"></i>' .. p_charName .. '<br><i class=\"fas fa-id-card\"></i> ' .. p_id .. '</div>')
+                if p_id == my_id then
+                    table.insert(plist, '<div id=\"myplayer\"> #' .. p_id .. ' | ' .. p_name .. '<span id=\"tiptext\"><i class=\"fas fa-file-signature\"></i>' .. p_charName .. '<br><i class=\"fas fa-id-card\"></i> ' .. p_id .. '</div>')
+                else
+                    table.insert(plist, '<div id=\"bplayers\"> #' .. p_id .. ' | ' .. p_name .. '<span id=\"tiptext\"><i class=\"fas fa-file-signature\"></i>' .. p_charName .. '<br><i class=\"fas fa-id-card\"></i> ' .. p_id .. '</div>')
+                end
             end     
+
+            if copCount >= minPacific then pacific = true else pacific = false end
+            if copCount >= minPaleto then paleto = true else paleto = false end
+            if copCount >= minShopRobbery then shop = true else shop = false end
+            if copCount >= minVangellico then jewels = true else jewels = false end
+            if copCount >= minHostage then hostage = true else hostage = false end
+
             SendNUIMessage({ 
                 action = "updateScoreboard",
-                info = table.concat(plist) 
+                info = table.concat(plist),
+                pacific = pacific,
+                paleto = paleto,
+                shop = shop,
+                jewels = jewels,
+                hostage = hostage
             })
+
         end)
-
-        if copCount >= minPacific then pacific = true else pacific = false end
-        if copCount >= minPaleto then paleto = true else paleto = false end
-        if copCount >= minShopRobbery then shop = true else shop = false end
-        if copCount >= minVangellico then jewels = true else jewels = false end
-        if copCount >= minHostage then hostage = true else hostage = false end
-
-        SendNUIMessage({
-            action = "updatePolice",
-            pacific = pacific,
-            paleto = paleto,
-            shop = shop,
-            jewels = jewels,
-            hostage = hostage
-        })
-
         bool = true
     end
 end)
