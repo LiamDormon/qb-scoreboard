@@ -12,6 +12,10 @@ QBCore.Functions.CreateCallback("scoreboard:GetPlayers", function(source, cb)
             ["charName"] = ("%s %s"):format(charinfo.firstname, charinfo.lastname),
             ["id"] = player
         }
+            
+        table.sort(players, function(a, b)
+            return a.id < b.id
+        end)   
     end
 
     cb(players)
