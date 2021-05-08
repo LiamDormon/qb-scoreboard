@@ -6,16 +6,15 @@ end)
 QBCore.Functions.CreateCallback("scoreboard:GetPlayers", function(source, cb)
     local players = {}
     for k, player in pairs(QBCore.Functions.GetPlayers()) do
-        local charinfo = QBCore.Functions.GetPlayer(player).PlayerData.charinfo
-        players[k] = {
-            ["name"] = GetPlayerName(player),
-            ["charName"] = ("%s %s"):format(charinfo.firstname, charinfo.lastname),
-            ["id"] = player
-        }
-            
-        table.sort(players, function(a, b)
-            return a.id < b.id
-        end)   
+        Player = QBCore.Functions.GetPlayer(player)
+        if Player ~= nil then
+            local charinfo = Player.PlayerData.charinfo
+            players[k] = {
+                ["name"] = GetPlayerName(player) ~= nil and GetPlayerName(player) or "Undefined",
+                ["charName"] = ("%s %s"):format(charinfo.firstname, charinfo.lastname),
+                ["id"] = player
+            }
+        end
     end
 
     cb(players)
